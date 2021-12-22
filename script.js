@@ -128,6 +128,15 @@ var cardScoring = function (cards) {
   return handScore;
 };
 
+var listCards = function (cardlist, person) {
+  message = `${person} has `;
+  for (let i = 0; i < cardlist.length; i += 1) {
+    message += `${cardlist[i].name} of ${cardlist[i].suit}, `;
+  }
+  message = message.slice(0, -1);
+  return message;
+};
+
 var main = function (input) {
   //if not in a game, start a new game
   if (inGameFlag == false) {
@@ -147,7 +156,11 @@ var main = function (input) {
     dealerScore = cardScoring(dealerCards);
     console.log(playerScore, dealerScore);
     if (playerScore == 21 && dealerScore != 21 && playerCards.length == 2) {
-      outputValue = `Player drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit} which is a Blackjack while dealer has ${dealerCards[0].name} of ${dealerCards[0].suit} and ${dealerCards[1].name} of ${dealerCards[1].suit} with a score of ${dealerScore}. <br><br> Player wins! Press submit to play another game.`;
+      outputValue =
+        listcards(playerCards, "Player") +
+        ` which is a Blackjack!` +
+        listCards(dealerCards, "Dealer") +
+        ` with a score of ${dealerScore}. <br><br> Player wins! Press submit to play another game.`;
       resetGame();
       return outputValue;
     } else if (
@@ -155,7 +168,11 @@ var main = function (input) {
       dealerScore == 21 &&
       playerCards.length == 2
     ) {
-      outputValue = `Dealer has ${dealerCards[0].name} of ${dealerCards[0].suit} and ${dealerCards[1].name} of ${dealerCards[1].suit} which is a Blackjack while player has ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit} with a score of ${playerScore}. <br><br> Dealer wins! Press submit to play another game.`;
+      outputValue =
+        listCards(dealerCards, "Dealer") +
+        ` which is a Blackjack!` +
+        listcards(playerCards, "Player") +
+        `with a score of ${playerScore}.  Dealer wins! <br><br>Press submit to play another game.`;
       resetGame();
       return outputValue;
     } else if (
@@ -163,14 +180,28 @@ var main = function (input) {
       dealerScore == 21 &&
       playerCards.length == 2
     ) {
-      outputValue = `Player has ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit} and dealer has ${dealerCards[0].name} of ${dealerCards[0].suit} and ${dealerCards[1].name} of ${dealerCards[1].suit}. Both have Blackjack and it's a push!. <br><br>Press submit to play another game.`;
+      outputValue =
+        listcards(playerCards, "Player") +
+        ` and dealer has ` +
+        listCards(dealerCards, "Dealer") +
+        ` Both have Blackjack and it's a push!. <br><br>Press submit to play another game.`;
       resetGame();
       return outputValue;
     } else {
-      return `Player has ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit} with a score of ${playerScore}. Dealer has ${dealerCards[0].name} of ${dealerCards[0].suit} and ${dealerCards[1].name} of ${dealerCards[1].suit} with a score of ${dealerScore}. Enter 'hit' or 'stand' to continue.`;
+      return (
+        listCards(playerCards, "Player") +
+        ` with a score of ${playerScore}. ` +
+        listCards(dealerCards, "Dealer") +
+        ` with a score of ${dealerScore}. <br><br>Enter 'hit' or 'stand' to continue`
+      );
     }
   } else if (inGameFlag == true) {
-    if (input == "hit") {
+    if (input != "hit" && input != "stand" && playerScore != 21) {
+      return (
+        listCards(playerCards, "Player") +
+        ` and now has a score of ${playerScore} while Dealer has a score of ${dealerScore}. <br><br>Enter 'hit' or 'stand' to continue.`
+      );
+    } else if (input == "hit") {
       playerCards.push(shuffledDeck.pop());
       console.log(
         playerCards[playerCards.length - 1].name +
@@ -180,19 +211,19 @@ var main = function (input) {
       playerScore = cardScoring(playerCards);
       console.log(playerScore);
       if (playerScore < 21) {
-        return `Player drew ${playerCards[playerCards.length - 1].name} of ${
-          playerCards[playerCards.length - 1].suit
-        } and now has a score of ${playerScore}. Enter 'hit' or 'stand' to continue.`;
+        return (
+          listCards(playerCards, "Player") +
+          ` and now has a score of ${playerScore} while Dealer has a score of ${dealerScore}. <br><br>Enter 'hit' or 'stand' to continue.`
+        );
       } else if (playerScore == 21) {
-        return `Player drew ${playerCards[playerCards.length - 1].name} of ${
-          playerCards[playerCards.length - 1].suit
-        } and now has a score of ${playerScore}. Press submit for the dealer to draw.`;
+        return (
+          listCards(playerCards, "Player") +
+          ` and now has a score of ${playerScore}.<br><br> Press submit for the dealer to draw.`
+        );
       } else {
-        outputValue = `Player drew ${
-          playerCards[playerCards.length - 1].name
-        } of ${
-          playerCards[playerCards.length - 1].suit
-        } and busts with a score of ${playerScore}. Dealer wins! Press submit to play another game.`;
+        outputValue =
+          listCards(playerCards, "Player") +
+          ` and busts with a score of ${playerScore}. Dealer wins! <br><br>Press submit to play another game.`;
         resetGame();
         return outputValue;
       }
@@ -202,27 +233,21 @@ var main = function (input) {
         dealerScore = cardScoring(dealerCards);
       }
       if (playerScore < dealerScore && dealerScore < 22) {
-        outputValue = `Dealer drew ${
-          dealerCards[dealerCards.length - 1].name
-        } of ${
-          dealerCards[dealerCards.length - 1].suit
-        } and has a total score of ${dealerScore} while the player has a score of ${playerScore}. <br><br> Dealer wins! Press submit to play again`;
+        outputValue =
+          listCards(dealerCards, "Dealer") +
+          ` and has a total score of ${dealerScore} while the player has a score of ${playerScore}. <br><br> Dealer wins! Press submit to play again`;
         resetGame();
         return outputValue;
       } else if (dealerScore < playerScore || dealerScore > 21) {
-        outputValue = `Dealer drew ${
-          dealerCards[dealerCards.length - 1].name
-        } of ${
-          dealerCards[dealerCards.length - 1].suit
-        } and has a total score of ${dealerScore} while the player has a score of ${playerScore}. <br><br> Player wins! Press submit to play again`;
+        outputValue =
+          listCards(dealerCards, "Dealer") +
+          ` and has a total score of ${dealerScore} while the player has a score of ${playerScore}. <br><br> Player wins! Press submit to play again`;
         resetGame();
         return outputValue;
       } else {
-        outputValue = `Dealer drew ${
-          dealerCards[dealerCards.length - 1].name
-        } of ${
-          dealerCards[dealerCards.length - 1].suit
-        } and has a total score of ${dealerScore} while the player has a score of ${playerScore}. <br><br> It's a push! Press submit to play again`;
+        outputValue =
+          listCards(dealerCards, "Dealer") +
+          ` and has a total score of ${dealerScore} while the player has a score of ${playerScore}. <br><br> It's a push! Press submit to play again`;
         resetGame();
         return outputValue;
       }
