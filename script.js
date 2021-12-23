@@ -131,7 +131,16 @@ var cardScoring = function (cards) {
 var listCards = function (cardlist, person) {
   message = `${person} has `;
   for (let i = 0; i < cardlist.length; i += 1) {
-    message += `${cardlist[i].name} of ${cardlist[i].suit}, `;
+    message += `${cardlist[i].name} of ${cardlist[i].suit} `;
+    if (cardlist[i].suit == "hearts") {
+      message += `♥, `;
+    } else if (cardlist[i].suit == "diamonds") {
+      message += `♦, `;
+    } else if (cardlist[i].suit == "spades") {
+      message += `♠, `;
+    } else if (cardlist[i].suit == "clubs") {
+      message += `♣, `;
+    }
   }
   message = message.slice(0, -1);
   return message;
